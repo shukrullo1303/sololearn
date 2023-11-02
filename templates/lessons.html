@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{course.name}}
+{% endblock title %}
+
+{% block content %}
+    <div class="container-md">
+        <div class="row mt-5">
+            <div class="col-md-2">
+              
+            </div>
+            <div class="col-md-8">
+                <h3 class="text-center">{{course.name}}</h3>
+                <p class="p-3 opacity-75">{{course.description}}</p>
+                    {% if course in course_completed %}
+                        <a class="btn btn-primary col-12 mb-3" href="{% url "get_certificate" course.id %}">Sertifikat olish</a>
+                    {% endif %}
+
+                <ul class="list-group">
+                    {% for lesson in lessons %}
+                        <li class="list-group-item mx-2"> 
+                            {% if request.user in lesson.lock.all %}
+                                <a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url "complete_page" course.name lesson.id lesson.pageofcourse_set.all.0.id %}">
+                                    <div class='row'>
+                                        <div class='col-2 m-2'>
+                                            <img src="https://blob.sololearn.com/web-assets/le-lesson-icon.svg"  alt="widgetImg">
+                                        </div>
+                                        <div class='col-8'>
+                                            <small class="card-text text-muted">{{ forloop.counter }}  - dars</small>
+                                            <h5 class="card-title">{{ lesson.theme }}</h5>
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center justify-content-center">
+                                            {% if lesson in completed %}
+                                                <img src="{% static "imgs/done.svg" %}" alt="">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </a>
+                            {% else %}
+                                <div class="link-offset-2 link-underline link-underline-opacity-0">
+                                    <div class='row'>
+                                        <div class='col-2 m-2'>
+                                            <img src="https://blob.sololearn.com/web-assets/le-lesson-icon.svg"  alt="widgetImg">
+                                        </div>
+                                        <div class='col-8'>
+                                            <small class="card-text text-muted"> {{ forloop.counter }}  - dars</small>
+                                            <h5 class="card-title">{{ lesson.theme }}</h5>
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center justify-content-center">
+                                            {% comment %} {% if lesson in completed %}
+                                                <img src="{% static "imgs/done.svg" %}" alt="">
+                                            {% endif %} {% endcomment %}
+                                            <img src="{% static "imgs/lock.svg" %}" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </li>    
+                    {% endfor %}
+                </ul>
+                </div>
+                <div class="col-md-2">
+                    
+                </div>
+            </div>
+            <div class="col-md-2">
+              
+            </div>
+        </div>
+    </div>
+{% endblock content %}

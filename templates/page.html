@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    {{lesson.theme}}
+{% endblock title %}
+
+{% block content %}
+    {% if request.user.is_authenticated %}
+        {% if request.user in lesson.lock.all %}
+            <div class="container-sm">  
+                <div class="row">
+                    <div class="col-md-2">
+
+                    </div>  
+                    <div class="col-md-8 d-flex flex-column" style="min-height: 80vh">
+        
+                        <div style=""  class="">
+                            <small>
+                                <a class="text-decoration-none text-muted" href="{% url "course" url_name%}">
+                                    <img src="{% static "imgs/back.png" %}" alt="">{{url_name}}</a>
+                            </small>
+                            <h3 class="text-center mb-3 ">{{pages.lesson_name.theme}}</h3>
+                                {% if pages.page_image %}
+                                        <img class="mb-3" 
+                                        style="display: block; 
+                                                margin-left: auto; 
+                                                margin-right: auto;   
+                                                width: 100%;
+                                                max-width: 400px;
+                                                height: auto;"
+                                        src="{{pages.page_image.url}}" alt="lesson's image" >
+                                {% endif %}
+                            <pre style="white-space: pre-wrap;">{{pages.context}}</pre>
+
+                            {% if pages.code_snippet_set.all %}
+                                {% for code in pages.code_snippet_set.all %}
+                                    <div class="row mb-2">
+                                        <div class="col-sm-8 mb-3 mb-sm-0">
+                                            <div class="card bg-dark text-white">
+                                                <div class="card-body bg-primary text-white text-end p-1">
+                                                    <h6 class="card-title">kod qismi</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                <pre class="card-text">{{code.code}}</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if code.answer %}
+                                            <div class="col-sm-4">
+                                                <div class="card bg-dark text-white">
+                                                    <div class="card-body bg-primary text-white text-end p-1">
+                                                        <h6 class="card-title">natija</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                    <pre class="card-text">{{code.answer}}</pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% for quiz in pages.quiz_set.all %}
+                                <div class="card bg-dark text-white" style="width: 100%">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <pre style="white-space: pre-wrap;">{{ quiz.question_text }}</pre> 
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        {% for choice in quiz.choice_set.all %}
+                                            <a href="{% url "check_answer" quiz.id choice.id  %}" class="list-group-item d-flex justify-content-between"> 
+                                                {{ choice.choice_text }}
+                                                {% if request.user in quiz.completed.all %}
+                                                    {% if choice.is_true %}
+                                                        <img src="{% static "imgs/done.svg" %}" alt="" width=20 height=20>
+                                                    {% endif %}    
+                                                {% endif %}
+                                            </a>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endfor %}
+                            
+                            {% if pages.inputquiz_set.all %}
+                                <div class="card bg-dark text-white" style="width: 100%">
+                                    <div class="card-header">
+                                        <form class="d-flex justify-content-between row" method="POST">
+                                            {% csrf_token %}
+                                            <div class="d-flex flex-wrap col-10 align-items-center">
+                                                {% for inputquiz in pages.inputquiz_set.all %}
+                                                    {% if request.user in inputquiz.completed.all %}
+                                                            <p style="">{{ inputquiz.question }}</p>
+                                                            {% if inputquiz.answer %}
+                                                                <p style="">{{ inputquiz.answer }}</p>
+                                                            {% endif %}
+                                                            {% if inputquiz.endings %}
+                                                                <p style="">{{ inputquiz.endings|safe }}</p> 
+                                                            {% endif %}
+                                                            {% if inputquiz.new_line == True %}       
+                                                                <div style="flex-basis: 100%;
+                                                                    height: 0;">
+                                                                </div>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <p style="">{{ inputquiz.question }}</p>  &nbsp;
+                                                        {% if inputquiz.answer %}
+                                                            <input class="col-2" type="text" name="answer_input_{{inputquiz.id}}"> &nbsp;    
+                                                        {% endif %}
+                                                        {% if inputquiz.endings %}       
+                                                        <p style="">{{ inputquiz.endings|safe }}</p> &nbsp;
+                                                        {% endif %}
+                                                        {% if inputquiz.new_line == True %}       
+                                                            <div style="flex-basis: 100%;
+                                                                height: 0;">
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            {% if is_completed_all_quizes %}
+                                                <img  class="col-1" src="{% static "imgs/done.svg" %}" alt=""  width=20 height=20>
+                                            {% else %}
+                                                <button class="btn btn-primary col-2" type='submit'>tekshirish</button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if pages.tips_set.all %}
+                                <br>
+                                {% for tip in pages.tips_set.all %}
+                                    <div>
+                                        &nbsp; &nbsp; &nbsp;
+                                        <img src="{% static "imgs/tips.svg" %}" alt=""> &nbsp;
+                                        <small>{{ tip }}</small>
+                                    </div>                                    
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mt-auto">
+                            {% if pages.id == lesson_first_page.id %}
+                                <div class="d-flex justify-content-end">
+                                    {% if next_page != 0 %}
+                                        {% if is_completed_all_quizes %}
+                                            <a href="{% url "complete_page" course.name current_pk next_page.id %}" class="btn btn-primary">
+                                                Keyingi
+                                            </a>
+                                        {% else %}
+                                            <div class="btn btn-danger">
+                                                Keyingi
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% elif pages.id == lesson_last_page.id %}
+                                    {% if next_lesson != 0 %}
+                                        <div class="d-flex justify-content-between">
+                                            <a href="{% url "complete_page" course.name current_pk prev_page.id %}" class="btn btn-primary">
+                                                Oldingi
+                                            </a>
+                                            {% if is_completed_all_quizes %}
+                                                <a href="{% url "complete_page" course.name next_lesson.id next_lesson.pageofcourse_set.all.0.id %}" class="btn btn-primary">
+                                                    Keyingi dars
+                                                </a>
+                                            {% else %}
+                                                <div class="btn btn-danger">
+                                                    Keyingi dars
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <div class="d-flex justify-content-between">
+                                            <a href="{% url "complete_page" course.name current_pk prev_page.id %}" class="btn btn-primary">
+                                                Oldingi
+                                            </a>
+                                            <a href="{% url "course" course.name %}" class="btn btn-primary">
+                                                Barcha darslar 
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                            {% else %}
+                                <div class="d-flex justify-content-between mt-auto">
+                                    <a href="{% url "complete_page" course.name current_pk prev_page.id %}" class="btn btn-primary">
+                                        Oldingi
+                                    </a>
+                                    {% if is_completed_all_quizes %}
+                                        <a href="{% url "complete_page" course.name current_pk next_page.id %}" class="btn btn-primary">
+                                            Keyingi
+                                        </a>
+                                    {% else %}
+                                        <div class="btn btn-danger">
+                                            Keyingi
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                </div>
+                <div class="col-md-2">
+
+                </div>
+            </div>
+            {% else %} 
+            <h3 class="text-center">Ushbu darslik bloklangan! <br>Ushbu sahifani ochish uchun oldingi darslarni o'qing va mashqlarini bajaring</h3>
+        {% endif %}
+    {% endif %}
+{% endblock content %}
+
+

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Peshqadamlar
+{% endblock title %}
+
+{% block content %}
+    <div class='container-fluid'>
+        <div class="row pt-4">
+            <div class="col-md-2">
+
+            </div>
+            <div class="col-md-8">
+                <h2 class='text-center mb-3'>Peshqadamlar jadvali</h2>
+                {% for user in users %}
+                    <div class="card mb-3">
+                        <div class="card-body  row">
+                            <div class="col-10 d-flex">
+                                <h3>{{forloop.counter}}.</h3> 
+                                <a href="{% url "profile" user.id%}" class="d-flex text-decoration-none">
+                                    {% if user.user_picture %}
+                                        <img class="rounded-circle mx-3"  src="{{user.user_picture.url}}" alt="" width="40px" height="40px">
+                                    {% else %}
+                                        <img src="{% static 'imgs/default.png' %}" alt="profile photo" class='rounded-circle mx-3' width=40px height=40px>
+                                    {% endif %}
+                                    <div>
+                                        <h5 class="card-title m-0 ">{{user.username}}</h5>
+                                        <small class='text-muted'>{{user.first_name}} {{user.last_name}}</small> 
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="d-flex col-2">
+                                <img src="{% static "imgs/star2.png" %}" class="me-1" width=20px height=20px>
+                                <p class="text-muted" >{{ user.xp }} XP</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-md-2">
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Profile rasm
+{% endblock title %}
+
+{% block content %}
+<div class="container-sm row">  
+    <div class="col-2">
+
+    </div>
+    <div class="col-8">
+        <h1>Profilingiz uchu rasm yuklang</h1>
+        {% if request.user.user_picture %}
+            <img src="{{request.user.user_picture.url}}" alt="profile photo" class='rounded-circle' width=150px height=150px>
+        {% else %}
+            <img src="{% static 'imgs/default.png' %}" alt="profile photo" class='rounded-circle' width=150px height=150px>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-primary col-2" type='submit'>Yuklash</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-2">
+
+    </div>
+</div>
+
+
+{% endblock content %}

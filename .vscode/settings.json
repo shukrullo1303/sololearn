@@ -1,0 +1,10 @@
+{
+  "emmet.includeLanguages": {
+    "django-html": "html"
+  },
+  "debug.javascript.debugByLinkOptions": "on",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "none"
+}

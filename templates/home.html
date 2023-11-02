@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Asosiy oyna
+{% endblock title %}
+
+{% block content %}
+    <div class='container-fluid'>
+      {% if request.user.is_authenticated %}
+        <div class="row pt-4">
+          <div class="col-md-2">
+
+          </div>
+            <div class="col-md-8">
+              <div class='row'>
+                <div class='col-md-3 d-flex justify-content-center px-5'>  
+                  <a href="{% url "picture" %}">
+                    {% if request.user.user_picture %}
+                        <img src="{{request.user.user_picture.url}}" alt="profile photo" class='rounded-circle' width=150px height=150px>
+                    {% else %}
+                      <img src="{% static 'imgs/default.png' %}" alt="profile photo" class='rounded-circle' width=150px height=150px>
+                    {% endif %}
+                </a>
+                </div>
+                <div class="col-md d-flex flex-column justify-content-center align-items-center">
+                  <h2>{{request.user.username}}</h2>
+                  <p>{{request.user.first_name}} {{request.user.last_name}}</p>
+                  <div class="d-flex">
+                    <img src="{% static "imgs/star2.png" %}" class="me-1" width=20px height=20px>
+                    <p class="text-muted" >{{ request.user.xp }} XP</p>
+                  </div>
+                </div>
+              </div>
+              {% if active_courses %}
+                <div class="card my-3 card-body">
+                    <h5 class="card-title text-center">Siz o'rganayotgan kurslaringiz</h5>
+                      <ul class="m-0">
+                        {% for active_course in active_courses %}
+                          <a href= "{% url "course" active_course.name  %}" class="list-group-item d-flex my-2 justify-content-start align-items-center">
+                              {% if active_course.picture %}
+                                <img src="{{active_course.picture.url}}" alt="" class='rounded-circle me-2' width=40px height=40px>
+                              {% else %}
+                                <img src="{% static 'imgs/default.png' %}" alt="" class='rounded-circle me-2' width=40px height=40px>  
+                              {% endif %}
+                            <p class="d-flex m-0 align-items-center">{{ active_course.name|title }}</p>
+                          </a>
+                        {% endfor %}
+                      </ul>
+                </div>
+              {% endif %}
+            </div> 
+            <div class="col-md-2">
+
+            </div>
+          </div>
+        </div>
+    {% else %}
+    <div class="row pt-4">
+      <div class="col-md-2">
+
+      </div>
+        <div class="col-md-8">
+            <div class="mb-3">
+            <a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url "register" %}">Ko'proq ma'lumot olish uchun ro'yxatdan o'ting</a>
+          </div> 
+        </div>
+      {% endif %}
+            <footer class="bg-dark text-light">
+              <div class="row">
+                <div class="col-md-2">
+
+                </div>
+                <div class="col-md-8">
+                  <h5 class="card-title my-3 text-center">Barcha kurslarimiz</h5>
+                  <ul>
+                    {% for course in courses %}
+                      <a href= "{% url "course" course.name  %}" class="list-group-item d-flex my-2 justify-content-start align-items-center">
+                        {% if course.picture %}
+                          <img src="{{course.picture.url}}" alt="" class='rounded-circle me-2' width=40px height=40px>
+                        {% else %}
+                          <img src="{% static 'imgs/default.png' %}" alt="" class='rounded-circle me-2' width=40px height=40px>  
+                        {% endif %}
+                        <p class="d-flex m-0 align-items-center">{{ course.name|title }}</p>
+                      </a>
+                      <small class="opacity-75">{{course.description|slice:"0:100"}}...</small>
+                    {% endfor %}
+                  </ul>
+                </div>
+            </div>
+          </footer>
+      </div>
+{% endblock content %}
