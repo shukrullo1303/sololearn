@@ -1,6 +1,4 @@
 from django.contrib import admin
-from django.forms import TextInput, Textarea
-from django.db import models
 from nested_admin import NestedModelAdmin, NestedTabularInline
 from .models import Course, PageOfCourse, Quiz, Choice, Lesson, InputQuiz, Tips, Code_snippet
 

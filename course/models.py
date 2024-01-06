@@ -1,6 +1,5 @@
 from django.db import models 
 from user.models import User 
-from ckeditor.fields import RichTextField
 
 class Course(models.Model): 
     picture = models.ImageField(blank=True, upload_to="imgs/course/")
